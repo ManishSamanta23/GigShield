@@ -70,7 +70,7 @@ const PolicyPage = () => {
                 </span>
               </div>
             </div>
-            <button className="btn-secondary" onClick={togglePause}>
+            <button className="btn-outline-orange" onClick={togglePause}>
               {policy.status === 'Active'
                 ? <><FiPause size={14} /> Pause Coverage</>
                 : <><FiPlay size={14} /> Resume Coverage</>}

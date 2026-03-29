@@ -12,7 +12,7 @@
   gap: 16px; margin-bottom: 20px; }
 .ap-stat { background: rgba(255,255,255,0.04); border-radius: 10px; padding: 14px; }
 .ap-stat span { font-size: 12px; color: var(--text-muted); display: block; margin-bottom: 6px; }
-.ap-stat strong { font-size: 20px; font-family: var(--font-head); }
+.ap-stat strong { font-size: 20px; font-family: var(--font-numbers); }
 .ap-events p { font-size: 13px; color: var(--text-muted); margin-bottom: 10px; }
 .event-tags { display: flex; flex-wrap: wrap; gap: 8px; }
 .event-tag { display: flex; align-items: center; gap: 6px; font-size: 13px;
@@ -27,20 +27,26 @@
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   gap: 20px; max-width: 900px; margin: 0 auto 40px; }
 
-.plan-card-policy { position: relative; padding: 28px; text-align: center; }
+.plan-card-policy { position: relative; padding: 28px; text-align: center; display: flex; flex-direction: column; height: 100%; }
 .plan-card-policy.popular { border-color: var(--orange); box-shadow: 0 0 40px rgba(255,107,53,0.12); }
 .popular-badge { position: absolute; top: -12px; left: 50%; transform: translateX(-50%);
   background: var(--orange); color: white; padding: 3px 14px;
   border-radius: 20px; font-size: 11px; font-weight: 700; white-space: nowrap; }
 .plan-card-policy h3 { font-size: 20px; font-weight: 700; margin-bottom: 16px; }
 .plan-price-big { margin-bottom: 8px; }
-.plan-price-big strong { font-size: 44px; font-family: var(--font-head); font-weight: 800; }
+.plan-price-big strong { font-size: 44px; font-family: var(--font-numbers); font-weight: 800; }
 .plan-price-big span { font-size: 15px; color: var(--text-muted); }
 .payout-label { font-size: 13px; color: var(--text-muted); margin-bottom: 20px;
   background: rgba(255,255,255,0.04); padding: 6px; border-radius: 8px; }
-.plan-events { list-style: none; margin-bottom: 24px; text-align: left; }
+.plan-events { list-style: none; margin-bottom: 24px; text-align: left; flex-grow: 1; }
 .plan-events li { display: flex; align-items: center; gap: 8px; padding: 7px 0;
   font-size: 14px; border-bottom: 1px solid var(--card-border); }
+
+.plan-card-policy .btn-primary, .plan-card-policy .btn-outline-orange {
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
+}
 
 .upgrade-section { margin-top: 32px; }
 .upgrade-section h3 { font-size: 20px; font-weight: 700; margin-bottom: 6px; }

@@ -59,7 +59,7 @@ const DashboardPage = () => {
       {/* Header */}
       <div className="dash-header">
         <div>
-          <h1>Good day, {worker?.name?.split(' ')[0]} 👋</h1>
+          <h1>Welcome back, {worker?.name?.split(' ')[0]}</h1>
           <p>{worker?.platform} Partner · {worker?.city} ·
             <span className={`risk-tag ${worker?.riskZone?.toLowerCase()}`}>
               {worker?.riskZone} Risk Zone

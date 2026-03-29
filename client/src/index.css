@@ -16,11 +16,24 @@
   --radius: 16px;
   --radius-sm: 10px;
   --shadow: 0 8px 32px rgba(0,0,0,0.3);
-  --font-head: 'Syne', sans-serif;
-  --font-body: 'DM Sans', sans-serif;
+  --font-head: 'Playfair Display', serif;
+  --font-body: 'Poppins', sans-serif;
+  --font-numbers: 'Inter', sans-serif;
+  font-stretch: normal;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin: 0; padding: 0; box-sizing: border-box; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
+
+html {
+  font-stretch: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-variant: normal;
+  font-variant-numeric: normal;
+  font-variant-alternates: normal;
+  font-variant-ligatures: normal;
+}
 
 body {
   font-family: var(--font-body);
@@ -28,9 +41,14 @@ body {
   color: var(--white);
   min-height: 100vh;
   overflow-x: hidden;
+  font-stretch: normal;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  text-rendering: optimizeLegibility;
+  font-feature-settings: "kern" 1;
 }
 
-h1, h2, h3, h4, h5 { font-family: var(--font-head); }
+h1, h2, h3, h4, h5 { font-family: var(--font-head); font-stretch: normal; -webkit-font-smoothing: antialiased; -moz-osx-font-smoothing: grayscale; text-rendering: optimizeLegibility; }
 
 a { text-decoration: none; color: inherit; }
 
@@ -55,6 +73,15 @@ a { text-decoration: none; color: inherit; }
   align-items: center;
   gap: 8px;
 }
+
+.btn-primary svg, .btn-secondary svg, .btn-outline-orange svg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+  flex-shrink: 0;
+}
+
 .btn-primary:hover {
   background: var(--orange-light);
   transform: translateY(-1px);
@@ -72,6 +99,9 @@ a { text-decoration: none; color: inherit; }
   font-weight: 500;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .btn-secondary:hover {
   border-color: var(--orange);
@@ -89,6 +119,9 @@ a { text-decoration: none; color: inherit; }
   font-weight: 600;
   cursor: pointer;
   transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 .btn-outline-orange:hover {
   background: var(--orange);

@@ -37,7 +37,7 @@
 }
 
 .hero-title {
-  font-size: clamp(48px, 7vw, 88px);
+  font-size: clamp(56px, 8.5vw, 110px);
   font-weight: 800;
   line-height: 1.05;
   margin-bottom: 24px;
@@ -74,7 +74,7 @@
   display: inline-flex;
 }
 .stat { text-align: center; }
-.stat strong { display: block; font-size: 28px; font-family: var(--font-head); color: var(--orange); }
+.stat strong { display: block; font-size: 28px; font-family: var(--font-numbers); color: var(--orange); }
 .stat span { font-size: 13px; color: var(--text-muted); }
 .stat-divider { width: 1px; height: 40px; background: var(--card-border); }
 
@@ -103,8 +103,8 @@
   background: rgba(255,255,255,0.07);
 }
 .trigger-icon { margin-bottom: 12px; }
-.trigger-card h4 { font-size: 15px; font-weight: 600; margin-bottom: 6px; }
-.trigger-card p { font-size: 13px; color: var(--text-muted); }
+.trigger-card h4 { font-size: 18px; font-weight: 600; margin-bottom: 6px; }
+.trigger-card p { font-size: 15px; color: var(--text-muted); }
 
 /* Steps */
 .steps-grid {
@@ -143,6 +143,9 @@
   padding: 32px;
   text-align: center;
   transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
 }
 .plan-card:hover { transform: translateY(-6px); }
 .plan-card.popular {
@@ -163,7 +166,7 @@
 }
 .plan-card h3 { font-size: 22px; font-weight: 700; margin-bottom: 16px; }
 .plan-price { margin-bottom: 8px; }
-.plan-price strong { font-size: 48px; font-family: var(--font-head); font-weight: 800; }
+.plan-price strong { font-size: 48px; font-family: var(--font-numbers); font-weight: 800; }
 .plan-price span { font-size: 16px; color: var(--text-muted); }
 .plan-payout {
   font-size: 14px;
@@ -177,6 +180,7 @@
   list-style: none;
   margin-bottom: 28px;
   text-align: left;
+  flex-grow: 1;
 }
 .plan-features li {
   display: flex;
@@ -185,6 +189,12 @@
   padding: 8px 0;
   font-size: 14px;
   border-bottom: 1px solid var(--card-border);
+}
+
+.plan-card .btn-primary {
+  margin-top: auto;
+  width: 100%;
+  justify-content: center;
 }
 
 /* CTA */

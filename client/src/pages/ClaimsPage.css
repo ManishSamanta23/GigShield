@@ -17,7 +17,7 @@
 .cs-card { text-align: center; padding: 20px; }
 .cs-label { font-size: 12px; color: var(--text-muted); margin-bottom: 8px;
   text-transform: uppercase; letter-spacing: 0.5px; }
-.cs-card h3 { font-size: 28px; font-family: var(--font-head); font-weight: 700; }
+.cs-card h3 { font-size: 28px; font-family: var(--font-numbers); font-weight: 700; }
 
 .empty-state { text-align: center; padding: 60px 24px; }
 .empty-state h3 { font-size: 20px; font-weight: 600; margin: 16px 0 8px; }
@@ -36,7 +36,7 @@
 .table-row:last-child { border-bottom: none; }
 .col-trigger { font-weight: 500; }
 .col-muted { color: var(--text-muted); }
-.col-amount { font-weight: 700; color: var(--orange); font-family: var(--font-head); }
+.col-amount { font-weight: 700; color: var(--orange); font-family: var(--font-numbers); }
 
 .fraud-bar { height: 4px; background: rgba(255,255,255,0.1);
   border-radius: 2px; margin-bottom: 4px; overflow: hidden; }
