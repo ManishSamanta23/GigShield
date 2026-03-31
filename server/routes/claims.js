@@ -19,6 +19,36 @@ const getFraudScore = (worker, triggerType, hoursLost) => {
   return Math.min(score, 1.0);
 };
 
+const AUTO_APPROVABLE_TRIGGERS = ['Heavy Rainfall', 'Flash Flood', 'Severe AQI'];
+
+const parseNumericValue = (value) => {
+  if (!value && value !== 0) return null;
+  const match = String(value).match(/\d+(\.\d+)?/);
+  return match ? Number(match[0]) : null;
+};
+
+const currentWeatherMatchesTrigger = (triggerType, triggerValue) => {
+  // If weather/AQI context is unavailable at submission time, keep claim under review.
+  if (!triggerValue && triggerValue !== 0) return false;
+
+  const observed = String(triggerValue).toLowerCase();
+  const numeric = parseNumericValue(triggerValue);
+
+  if (triggerType === 'Heavy Rainfall') {
+    return observed.includes('rain') || observed.includes('precip') || (numeric !== null && numeric >= 35);
+  }
+
+  if (triggerType === 'Flash Flood') {
+    return observed.includes('flood') || observed.includes('extreme rain') || (numeric !== null && numeric >= 60);
+  }
+
+  if (triggerType === 'Severe AQI') {
+    return (observed.includes('aqi') && numeric !== null && numeric > 200) || (numeric !== null && numeric > 200);
+  }
+
+  return false;
+};
+
 // @route POST /api/claims
 router.post('/', protect, async (req, res) => {
   try {
@@ -36,9 +66,14 @@ router.post('/', protect, async (req, res) => {
     );
 
     const fraudScore = getFraudScore(req.worker, triggerType, hoursLost);
-    let status = 'Auto-Approved';
-    if (fraudScore >= 0.6) status = 'Under Review';
-    else if (fraudScore >= 0.3) status = 'Pending';
+    const status = (
+      fraudScore < 0.2 &&
+      AUTO_APPROVABLE_TRIGGERS.includes(triggerType) &&
+      triggerType !== 'Curfew/Bandh' &&
+      currentWeatherMatchesTrigger(triggerType, triggerValue)
+    )
+      ? 'Auto-Approved'
+      : 'Under Review';
 
     const claim = await Claim.create({
       worker: req.worker._id,

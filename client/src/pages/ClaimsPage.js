@@ -102,7 +102,7 @@ const ClaimsPage = () => {
           { label: 'Total Claims', val: claims.length, color: '#63B3ED' },
           { label: 'Auto-Approved', val: claims.filter(c => c.status === 'Auto-Approved').length, color: '#00C49F' },
           { label: 'Under Review', val: claims.filter(c => c.status === 'Under Review').length, color: '#FFD166' },
-          { label: 'Total Payout', val: `₹${claims.filter(c => ['Auto-Approved','Approved','Paid'].includes(c.status)).reduce((s,c) => s + c.payoutAmount, 0).toLocaleString()}`, color: '#FF6B35' },
+          { label: 'Total Payout', val: `₹${claims.filter(c => ['Auto-Approved','Approved'].includes(c.status)).reduce((s,c) => s + c.payoutAmount, 0).toLocaleString()}`, color: '#FF6B35' },
         ].map((s, i) => (
           <div className="cs-card card" key={i}>
             <p className="cs-label">{s.label}</p>
