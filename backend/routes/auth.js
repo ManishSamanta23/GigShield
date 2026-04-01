@@ -29,7 +29,7 @@ const generateToken = (id) =>
 router.post('/register', async (req, res) => {
   try {
     const parsed = registerSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
 
     const { name, phone, email, platform, platformId, city, pincode,
       avgWeeklyEarnings, avgDailyHours, password } = parsed.data;
@@ -71,7 +71,7 @@ router.post('/register', async (req, res) => {
 router.post('/login', async (req, res) => {
   try {
     const parsed = loginSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
 
     const { phone, password } = parsed.data;
     const worker = await Worker.findOne({ phone });

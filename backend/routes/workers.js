@@ -25,7 +25,7 @@ router.get('/profile', protect, async (req, res) => {
 router.put('/profile', protect, async (req, res) => {
   try {
     const parsed = profileSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
     
     const worker = await Worker.findById(req.worker._id);
     const { name, email, avgWeeklyEarnings, avgDailyHours } = parsed.data;

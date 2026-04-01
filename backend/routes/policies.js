@@ -23,7 +23,7 @@ const calculatePremium = (base, riskScore) => {
 router.post('/', protect, async (req, res) => {
   try {
     const parsed = planSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
     const { plan } = parsed.data;
 
     const existing = await Policy.findOne({ worker: req.worker._id, status: 'Active' });
@@ -56,7 +56,7 @@ router.get('/my', protect, async (req, res) => {
 router.put('/my/upgrade', protect, async (req, res) => {
   try {
     const parsed = planSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
     const { plan } = parsed.data;
 
     const policy = await Policy.findOne({ worker: req.worker._id, status: 'Active' }).sort('-createdAt');

@@ -86,7 +86,7 @@ router.get('/live', protect, async (req, res) => {
 router.post('/simulate', protect, async (req, res) => {
   try {
     const parsed = simulateSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
     const { type, city, value, severity } = parsed.data;
     const trigger = await Trigger.create({
       type, city: city || req.worker.city,

@@ -60,7 +60,7 @@ const currentWeatherMatchesTrigger = (triggerType, triggerValue) => {
 router.post('/', protect, async (req, res) => {
   try {
     const parsed = claimSchema.safeParse(req.body);
-    if (!parsed.success) return res.status(400).json({ message: parsed.error.errors[0].message });
+    if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
     const { triggerType, triggerValue, hoursLost } = parsed.data;
     const policy = await Policy.findOne({ worker: req.worker._id, status: 'Active' });
     if (!policy) return res.status(400).json({ message: 'No active policy found' });
