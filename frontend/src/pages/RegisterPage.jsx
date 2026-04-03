@@ -31,7 +31,7 @@ const RegisterPage = () => {
     try {
       const { data } = await api.post('/auth/register', form);
       login(data);
-      toast.success('Account created! Welcome to GigShield 🛡️');
+      toast.success('Account created! Welcome to Avaran 🛡️');
       navigate('/policy');
     } catch (err) {
       toast.error(err.response?.data?.message || 'Registration failed');

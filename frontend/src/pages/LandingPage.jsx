@@ -89,7 +89,7 @@ const LandingPage = () => {
       <section className="section section-dark">
         <div className="page-container">
           <div className="section-header">
-            <h2>How GigShield Works</h2>
+            <h2>How Avaran Works</h2>
             <p>Zero forms. Zero waiting. Fully automated.</p>
           </div>
           <div className="steps-grid">

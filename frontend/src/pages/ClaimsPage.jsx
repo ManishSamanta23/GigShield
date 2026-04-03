@@ -288,7 +288,7 @@ const ClaimsPage = () => {
         <div className="empty-state card">
           <FiCheckCircle size={48} color="#00C49F" />
           <h3>No claim activity</h3>
-          <p>GigShield monitors your home zone for disruptions 24/7. Your data will appear here.</p>
+          <p>Avaran monitors your home zone for disruptions 24/7. Your data will appear here.</p>
         </div>
       ) : (
         <div className="claims-table card">

@@ -1,11 +1,11 @@
-# 🛡️ GigShield — MERN Stack Setup Guide
+# 🛡️ Avaran — MERN Stack Setup Guide
 
 This project features a strictly validated API architecture powered by Zod, a high-performance React frontend built with Vite, and a standard Express backend, all managed from a single root monorepo.
 
 ## Project Structure
 
 ```
-gigshield/
+avaran/
 ├── backend/                 # Node.js + Express Backend
 │   ├── index.js             # Entry point
 │   ├── config/db.js         # MongoDB connection
@@ -62,7 +62,7 @@ gigshield/
 Because of the monorepo structure, a single install populates everything.
 ```bash
 git clone <your-repo>
-cd gigshield
+cd avaran
 npm install
 ```
 
@@ -70,7 +70,7 @@ npm install
 Create a `.env` file at the root.
 ```bash
 # Add your local variables:
-MONGO_URI=mongodb://localhost:27017/gigshield
+MONGO_URI=mongodb://localhost:27017/avaran
 JWT_SECRET=your_secret_key_here
 ```
 

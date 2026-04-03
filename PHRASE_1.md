@@ -1,6 +1,6 @@
 # Phase 2 Deliverables: Implementation Details
 
-This document explains in detail how the 4 core points from the Phase 2 deliverables ("Automation & Protection") are utilized and executed within the GigShield platform.
+This document explains in detail how the 4 core points from the Phase 2 deliverables ("Automation & Protection") are utilized and executed within the Avaran platform.
 
 ## 1. Registration Process
 The registration process is crucial for not only authenticating the Q-Commerce delivery partner but also initializing their baseline risk profile.
@@ -23,7 +23,7 @@ To satisfy the "AI Integration Example", the platform natively dynamically scale
 * **The Result:** If a significantly low-risk worker (`0.30`) browses the plans, they are automatically offered a customized **₹10/week discount**. Conversely, a high-risk worker (`0.80` from Mumbai) sees a **₹10/week surcharge**. The price they see is perfectly localized to them, making the platform financially viable while adhering to the hackathon's "Dynamic Pricing Modelling" constraint perfectly.
 
 ## 4. Claims Management (Zero-Touch Automation)
-Parametric insurance requires that workers do not spend hours filling out manual damage forms. GigShield has evolved to a fully automated, data-driven validation system.
+Parametric insurance requires that workers do not spend hours filling out manual damage forms. Avaran has evolved to a fully automated, data-driven validation system.
 * **Proactive Prediction & Visual Pipeline:** The Claims Management system now features:
   * **Proactive Suggestions:** The platform monitors live environmental conditions and sends "Automatic Claims Alerts" if a disruption is detected in the worker's zone, pre-filling the claim for them.
   * **Visual Validation Stepper:** A multi-step UI that demonstrates the "Parametric Engine" at work—capturing GPS, querying OpenWeatherMap APIs, analyzing thresholds, and initiating payouts in real-time.

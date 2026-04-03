@@ -1,4 +1,4 @@
-# 🛒 GigShield — AI-Powered Parametric Income Insurance for India's Q-Commerce Workers
+# 🛒 Avaran — AI-Powered Parametric Income Insurance for India's Q-Commerce Workers
 
 > **Guidewire DEVTrails 2026 | University Hackathon**
 > Protecting the livelihoods of Zepto & Blinkit delivery partners from uncontrollable external disruptions.
@@ -26,7 +26,7 @@ India's Q-Commerce (Quick Commerce) delivery partners working with platforms lik
 
 External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, local curfews, or sudden strikes** — can force these workers off the road for hours or even entire days, causing them to **lose 20–30% of their weekly earnings** with zero financial protection.
 
-**GigShield** is a parametric income insurance platform that automatically detects these disruptions and triggers instant payouts to workers — **no paperwork, no manual claims, no waiting**.
+**Avaran** is a parametric income insurance platform that automatically detects these disruptions and triggers instant payouts to workers — **no paperwork, no manual claims, no waiting**.
 
 ---
 
@@ -51,7 +51,7 @@ External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, l
 
 > Raju is a Blinkit partner in Andheri, Mumbai. On a Tuesday afternoon, the IMD issues a Red Alert for heavy rainfall. Roads begin to flood and Blinkit temporarily suspends delivery operations in Raju's zone. He loses 5 hours of work — approximately ₹500 in earnings.
 >
-> **With GigShield:** The system detects rainfall > 20mm/hr from the weather API and a Blinkit zone suspension signal. An automatic claim is triggered. Within 2 hours, ₹450 is credited to Raju's UPI account — no action required from him.
+> **With Avaran:** The system detects rainfall > 20mm/hr from the weather API and a Blinkit zone suspension signal. An automatic claim is triggered. Within 2 hours, ₹450 is credited to Raju's UPI account — no action required from him.
 
 ---
 
@@ -59,7 +59,7 @@ External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, l
 
 > During peak winter, Delhi's AQI crosses 400 (Severe category). The Delhi government issues a partial outdoor work restriction. Zepto partners in affected pin codes lose an entire day of income.
 >
-> **With GigShield:** AQI data from CPCB/OpenAQ API triggers the pollution disruption clause. All registered GigShield workers in the affected pin codes receive automatic payouts proportional to their average daily income — calculated from the last 4 weeks of activity data.
+> **With Avaran:** AQI data from CPCB/OpenAQ API triggers the pollution disruption clause. All registered Avaran workers in the affected pin codes receive automatic payouts proportional to their average daily income — calculated from the last 4 weeks of activity data.
 
 ---
 
@@ -67,7 +67,7 @@ External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, l
 
 > A surprise bandh is called in a district of Bengaluru. Roads are blocked and Zepto pauses operations for the zone. Workers lose an average of 6–8 hours.
 >
-> **With GigShield:** Social disruption triggers sourced from verified government/news APIs flag the affected pin codes. Claims are auto-initiated for all active policy holders in those zones.
+> **With Avaran:** Social disruption triggers sourced from verified government/news APIs flag the affected pin codes. Claims are auto-initiated for all active policy holders in those zones.
 
 ---
 
@@ -75,7 +75,7 @@ External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, l
 
 ```
 ┌─────────────────────────────────────────────────────────────────┐
-│                        GIGSHIELD PLATFORM                        │
+│                          AVARAN PLATFORM                         │
 ├─────────────────────────────────────────────────────────────────┤
 │                                                                   │
 │  [1] ONBOARDING          [2] RISK PROFILING    [3] POLICY         │
@@ -106,7 +106,7 @@ External disruptions — **heavy rain, flash floods, extreme heat, AQI spikes, l
 
 ## 💰 Weekly Premium Model
 
-Q-Commerce workers operate on a **week-to-week earning cycle** — they receive platform payouts weekly. GigShield's pricing mirrors this exact cycle.
+Q-Commerce workers operate on a **week-to-week earning cycle** — they receive platform payouts weekly. Avaran's pricing mirrors this exact cycle.
 
 ### Premium Tiers
 
@@ -164,7 +164,7 @@ IF [Environmental Threshold Crossed]
 THEN → Initiate Auto-Claim → Calculate Payout → Process UPI Transfer
 ```
 
-**Important:** GigShield only covers **income lost during disruptions** — not vehicle damage, health, or accidents.
+**Important:** Avaran only covers **income lost during disruptions** — not vehicle damage, health, or accidents.
 
 ---
 
@@ -391,17 +391,17 @@ This risk profile determines their initial premium band and recommended plan.
 
 ## ⚠️ Coverage Exclusions (As per hackathon constraints)
 
-GigShield **strictly excludes** the following — these are not insurable events under this platform:
+Avaran **strictly excludes** the following — these are not insurable events under this platform:
 - ❌ Vehicle repair or damage
 - ❌ Health, medical, or accident insurance
 - ❌ Life insurance or death benefits
 - ❌ Income lost due to worker's own unavailability (sick leave, personal reasons)
 
-GigShield **only covers** verifiable, objective, external disruptions that cause loss of income.
+Avaran **only covers** verifiable, objective, external disruptions that cause loss of income.
 
 ---
 
 *Built with ❤️ for India's 15M+ gig workers | Guidewire DEVTrails 2026*
 
 
-[def]: https://www.dropbox.com/scl/fi/34pn8loi47279v36o628k/GigShield-Project.mp4?rlkey=kb4khgitr5h8v13xen954f07n&st=zt3i401m&dl=0
+[def]: https://www.dropbox.com/scl/fi/34pn8loi47279v36o628k/Avaran-Project.mp4?rlkey=kb4khgitr5h8v13xen954f07n&st=zt3i401m&dl=0

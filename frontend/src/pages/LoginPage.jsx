@@ -64,7 +64,7 @@ const LoginPage = () => {
           </button>
         </form>
         <p className="auth-switch">
-          New to GigShield? <Link to="/register">Create account</Link>
+          New to Avaran? <Link to="/register">Create account</Link>
         </p>
       </div>
     </div>

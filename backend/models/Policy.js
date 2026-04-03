@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 /**
  * Policy Schema:
- * Defines the active insurance contract between a worker and the GigShield platform.
+ * Defines the active insurance contract between a worker and the Avaran platform.
  * Tracks coverage limits, personalized premiums, and financial balances.
  */
 const policySchema = new mongoose.Schema({

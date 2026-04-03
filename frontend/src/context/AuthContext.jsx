@@ -8,7 +8,7 @@ export const AuthProvider = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const stored = localStorage.getItem('gigshield_worker');
+    const stored = localStorage.getItem('avaran_worker');
     if (stored) {
       const parsed = JSON.parse(stored);
       setWorker(parsed);
@@ -19,13 +19,13 @@ export const AuthProvider = ({ children }) => {
 
   const login = (data) => {
     setWorker(data);
-    localStorage.setItem('gigshield_worker', JSON.stringify(data));
+    localStorage.setItem('avaran_worker', JSON.stringify(data));
     axios.defaults.headers.common['Authorization'] = `Bearer ${data.token}`;
   };
 
   const logout = () => {
     setWorker(null);
-    localStorage.removeItem('gigshield_worker');
+    localStorage.removeItem('avaran_worker');
     delete axios.defaults.headers.common['Authorization'];
   };
 
