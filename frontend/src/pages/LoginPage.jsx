@@ -34,7 +34,7 @@ const LoginPage = () => {
       <div className="auth-card card">
         <div className="auth-logo">
           <ShieldIcon color="#FF6B35" size={32} />
-          <h2>Avar<Strong>an</Strong></h2>
+          <h2>Avar<strong>an</strong></h2>
         </div>
         <h3>Welcome back</h3>
         <p className="auth-sub">Login to manage your coverage</p>

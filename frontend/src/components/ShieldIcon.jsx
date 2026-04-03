@@ -1,6 +1,6 @@
 const ShieldIcon = () => {
     return (
-        <svg width="32" height="32" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
+        <svg width="35" height="35" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg">
             <path d="M32 4 L10 12 V28 C10 42 20 52 32 58 C44 52 54 42 54 28 V12 Z"
                 fill="none"
                 stroke="#FF6A00"

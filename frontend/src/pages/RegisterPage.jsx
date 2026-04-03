@@ -46,7 +46,7 @@ const RegisterPage = () => {
       <div className="auth-card card wide">
         <div className="auth-logo">
           <ShieldIcon />
-          <h2>Avar<Strong>an</Strong></h2>
+          <h2>Avar<strong>an</strong></h2>
         </div>
 
         <div className="steps-indicator">

@@ -29,7 +29,7 @@ const Navbar = () => {
       <div className="nav-inner page-container">
         <Link to="/" className="nav-logo">
           <ShieldIcon />
-          <span>Avar<Strong>an</Strong></span>
+          <span>Avar<strong>an</strong></span>
         </Link>
 
         {worker && (
