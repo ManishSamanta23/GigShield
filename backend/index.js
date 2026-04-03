@@ -29,16 +29,32 @@ if (process.env.NODE_ENV === 'production') {
   );
 }
 
-// Connect DB and start server
-const PORT = process.env.PORT || 5000;
-mongoose
-  .connect(process.env.MONGO_URI)
-  .then(() => {
+// Serverless DB Connection Optimization
+let isConnected = false;
+const connectDB = async () => {
+  if (isConnected) return;
+  try {
+    const db = await mongoose.connect(process.env.MONGO_URI, {
+      serverSelectionTimeoutMS: 5000,
+    });
+    isConnected = db.connections[0].readyState;
     console.log('✅ MongoDB Connected');
-    if (process.env.NODE_ENV !== 'production') {
-      app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
-    }
-  })
-  .catch((err) => console.error('❌ DB Error:', err));
+  } catch (err) {
+    console.error('❌ DB Error:', err);
+  }
+};
+
+// Ensure DB connects before processing any route
+app.use(async (req, res, next) => {
+  await connectDB();
+  next();
+});
+
+const PORT = process.env.PORT || 5000;
+if (process.env.NODE_ENV !== 'production') {
+  connectDB().then(() => {
+    app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+  });
+}
 
 module.exports = app;
