@@ -155,7 +155,7 @@ const LandingPage = () => {
         <div className="page-container">
           <div className="footer-logo">
             <ShieldIcon color="#FF6B35" />
-            <span>Avaran</span>
+            <span>Avar<Strong>an</Strong></span>
           </div>
           <p>Built for India's invisible workforce · Guidewire DEVTrails 2026</p>
           <p className="footer-note">
