@@ -28,7 +28,7 @@ const Navbar = () => {
       <div className="nav-inner page-container">
         <Link to="/" className="nav-logo">
           <FiShield className="logo-icon" />
-          <span>Gig<strong>Shield</strong></span>
+          <span>Avaran</span>
         </Link>
 
         {worker && (

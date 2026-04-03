@@ -46,7 +46,7 @@ const RegisterPage = () => {
       <div className="auth-card card wide">
         <div className="auth-logo">
           <FiShield color="#FF6B35" size={32} />
-          <h2>Gig<span>Shield</span></h2>
+          <h2>Avaran</h2>
         </div>
 
         <div className="steps-indicator">

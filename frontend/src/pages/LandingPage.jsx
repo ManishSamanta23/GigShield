@@ -154,7 +154,7 @@ const LandingPage = () => {
         <div className="page-container">
           <div className="footer-logo">
             <FiShield color="#FF6B35" />
-            <span>Gig<strong>Shield</strong></span>
+            <span>Avaran</span>
           </div>
           <p>Built for India's invisible workforce · Guidewire DEVTrails 2026</p>
           <p className="footer-note">
