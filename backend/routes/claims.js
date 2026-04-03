@@ -4,11 +4,14 @@ const Claim = require('../models/Claim');
 const Policy = require('../models/Policy');
 const { protect } = require('../middleware/auth');
 const { z } = require('zod');
+const { validateClaimAgainstRealData } = require('../utils/autoApprovalEngine');
 
 const claimSchema = z.object({
   triggerType: z.string({ required_error: 'Trigger type is required' }).min(1, 'Trigger type is required'),
-  triggerValue: z.any().optional(),
-  hoursLost: z.coerce.number().positive('Hours lost must be greater than 0').max(24, 'Hours lost cannot exceed 24')
+  triggerValue: z.any().optional(), // For reference only - NOT used for auto-approval
+  hoursLost: z.coerce.number().positive('Hours lost must be greater than 0').max(24, 'Hours lost cannot exceed 24'),
+  latitude: z.coerce.number().optional(), // Geolocation for API validation
+  longitude: z.coerce.number().optional() // Geolocation for API validation
 });
 
 // Payout formula
@@ -18,7 +21,7 @@ const calculatePayout = (hoursLost, avgDailyHours, avgDailyEarnings, plan) => {
   return Math.round((hoursLost / avgDailyHours) * avgDailyEarnings * ratio);
 };
 
-// Simple fraud score
+// Simple fraud score calculation
 const getFraudScore = (worker, triggerType, hoursLost) => {
   let score = 0;
   if (hoursLost > 12) score += 0.4;
@@ -26,81 +29,122 @@ const getFraudScore = (worker, triggerType, hoursLost) => {
   return Math.min(score, 1.0);
 };
 
-const AUTO_APPROVABLE_TRIGGERS = ['Heavy Rainfall', 'Flash Flood', 'Severe AQI'];
+const AUTO_APPROVABLE_TRIGGERS = ['Heavy Rainfall', 'Flash Flood', 'Extreme Heat', 'Cyclone', 'Air Pollution'];
 
-const parseNumericValue = (value) => {
-  if (!value && value !== 0) return null;
-  const match = String(value).match(/\d+(\.\d+)?/);
-  return match ? Number(match[0]) : null;
-};
-
-const currentWeatherMatchesTrigger = (triggerType, triggerValue) => {
-  // If weather/AQI context is unavailable at submission time, keep claim under review.
-  if (!triggerValue && triggerValue !== 0) return false;
-
-  const observed = String(triggerValue).toLowerCase();
-  const numeric = parseNumericValue(triggerValue);
-
-  if (triggerType === 'Heavy Rainfall') {
-    return observed.includes('rain') || observed.includes('precip') || (numeric !== null && numeric >= 35);
-  }
-
-  if (triggerType === 'Flash Flood') {
-    return observed.includes('flood') || observed.includes('extreme rain') || (numeric !== null && numeric >= 60);
-  }
-
-  if (triggerType === 'Severe AQI') {
-    return (observed.includes('aqi') && numeric !== null && numeric > 200) || (numeric !== null && numeric > 200);
-  }
-
-  return false;
-};
 
 // @route POST /api/claims
+// @desc Submit a new claim with real-time data validation
+// @access Private
 router.post('/', protect, async (req, res) => {
   try {
     const parsed = claimSchema.safeParse(req.body);
     if (!parsed.success) return res.status(400).json({ message: parsed.error.issues[0].message });
-    const { triggerType, triggerValue, hoursLost } = parsed.data;
+    
+    const { triggerType, triggerValue, hoursLost, latitude, longitude } = parsed.data;
+    
+    // Get the worker's active policy
     const policy = await Policy.findOne({ worker: req.worker._id, status: 'Active' });
     if (!policy) return res.status(400).json({ message: 'No active policy found' });
 
+    // Check if this trigger type is covered by the policy
     if (!policy.coverageEvents.includes(triggerType))
       return res.status(400).json({ message: 'This trigger is not covered by your plan' });
 
+    // Calculate payout based on worker's earnings and policy
     const avgDailyEarnings = req.worker.avgWeeklyEarnings / 7;
     const payoutAmount = Math.min(
       calculatePayout(hoursLost, req.worker.avgDailyHours, avgDailyEarnings, policy.plan),
       policy.maxWeeklyPayout
     );
 
+    // Calculate fraud risk
     const fraudScore = getFraudScore(req.worker, triggerType, hoursLost);
-    const status = (
-      fraudScore < 0.2 &&
-      AUTO_APPROVABLE_TRIGGERS.includes(triggerType) &&
-      triggerType !== 'Curfew/Bandh' &&
-      currentWeatherMatchesTrigger(triggerType, triggerValue)
-    )
-      ? 'Auto-Approved'
-      : 'Under Review';
 
-    const claim = await Claim.create({
+    // IMPORTANT: Auto-approval is based on REAL API data, not user-entered values
+    let status = 'Under Review';
+    let autoApprovalDetails = null;
+    let transactionId = null;
+
+    // If geolocation data is provided, validate against real-time APIs
+    if (latitude && longitude && AUTO_APPROVABLE_TRIGGERS.includes(triggerType) && fraudScore < 0.2) {
+      try {
+        console.log(`🔍 Validating claim (${triggerType}) against real API data at [${latitude}, ${longitude}]`);
+        
+        const validationResult = await validateClaimAgainstRealData(triggerType, latitude, longitude);
+        autoApprovalDetails = validationResult;
+
+        if (validationResult.success && validationResult.auto_approved) {
+          status = 'Auto-Approved';
+          transactionId = 'TXN' + Date.now();
+          console.log(`✅ Claim AUTO-APPROVED based on API validation: ${validationResult.decision_reason}`);
+        } else {
+          status = 'Under Review';
+          console.log(`⚠️ Claim UNDER REVIEW: ${validationResult.decision_reason}`);
+        }
+      } catch (validationError) {
+        console.error('❌ API validation failed:', validationError.message);
+        status = 'Under Review';
+        autoApprovalDetails = {
+          success: false,
+          error: validationError.message,
+          decision_reason: 'Could not validate against real-time API data. Moving to manual review.'
+        };
+      }
+    } else {
+      // If no geolocation or invalid trigger type, move to manual review
+      if (!latitude || !longitude) {
+        autoApprovalDetails = {
+          success: false,
+          error: 'Geolocation not provided',
+          decision_reason: 'Geolocation coordinates required for automated validation'
+        };
+      } else if (!AUTO_APPROVABLE_TRIGGERS.includes(triggerType)) {
+        autoApprovalDetails = {
+          success: false,
+          error: 'Manual review required',
+          decision_reason: `Trigger type '${triggerType}' requires manual verification`
+        };
+      } else if (fraudScore >= 0.2) {
+        autoApprovalDetails = {
+          success: false,
+          error: 'High fraud risk',
+          decision_reason: `Fraud risk score (${fraudScore.toFixed(2)}) exceeds threshold`
+        };
+      }
+    }
+
+    // Create the claim record
+    const claimData = {
       worker: req.worker._id,
       policy: policy._id,
-      triggerType, triggerValue, hoursLost, payoutAmount,
-      fraudScore, status,
-      payoutTransactionId: status === 'Auto-Approved'
-        ? 'TXN' + Date.now()
-        : null
-    });
+      triggerType,
+      triggerValue, // Reference only - NOT used for auto-approval
+      hoursLost,
+      payoutAmount,
+      fraudScore,
+      status,
+      payoutTransactionId: transactionId,
+      isAutoClaim: status === 'Auto-Approved',
+      autoApprovalDetails: autoApprovalDetails // Store validation details
+    };
 
+    const claim = await Claim.create(claimData);
+
+    // If auto-approved, update policy payout tracking
     if (status === 'Auto-Approved') {
-      policy.totalPayoutReceived += payoutAmount;
+      policy.totalPayoutReceived = (policy.totalPayoutReceived || 0) + payoutAmount;
       await policy.save();
     }
 
-    res.status(201).json(claim);
+    // Return claim with validation details
+    res.status(201).json({
+      message: `Claim submitted. Status: ${status}`,
+      claim: claim,
+      autoApprovalDetails: autoApprovalDetails
+    });
+
   } catch (err) {
+    console.error('❌ Claim submission error:', err.message);
     res.status(500).json({ message: err.message });
   }
 });

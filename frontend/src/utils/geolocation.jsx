@@ -4,7 +4,7 @@
 
 /**
  * Get current position using browser Geolocation API
- * @returns {Promise<{latitude: number, longitude: number, city: string, accuracy: number}>}
+ * @returns {Promise<{latitude: number, longitude: number, locationName: string, city: string, state: string, country: string, accuracy: number}>}
  */
 export const getCurrentLocation = () => {
   return new Promise((resolve, reject) => {
@@ -24,12 +24,20 @@ export const getCurrentLocation = () => {
         const { latitude, longitude, accuracy } = position.coords;
         
         try {
-          // Reverse geocode to get city name
-          const city = await reverseGeocode(latitude, longitude);
-          resolve({ latitude, longitude, city, accuracy });
+          // Reverse geocode to get location details
+          const locationDetails = await reverseGeocode(latitude, longitude);
+          resolve({ latitude, longitude, ...locationDetails, accuracy });
         } catch (err) {
           // Return coordinates even if geocoding fails
-          resolve({ latitude, longitude, city: null, accuracy });
+          resolve({ 
+            latitude, 
+            longitude, 
+            locationName: null,
+            city: null, 
+            state: null,
+            country: null,
+            accuracy 
+          });
         }
       },
       (error) => {
@@ -42,22 +50,45 @@ export const getCurrentLocation = () => {
 };
 
 /**
- * Reverse geocode coordinates to get city name
- * Uses Open Nominatim (free, no API key required)
+ * Reverse geocode coordinates to get full location details
+ * Uses OpenWeatherMap Geocoding API (free tier supports reverse geocoding)
+ * Falls back to OpenStreetMap Nominatim if needed
  */
 const reverseGeocode = async (latitude, longitude) => {
   try {
+    // Use OpenStreetMap Nominatim (free, no API key required)
     const response = await fetch(
-      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`,
+      `https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}&zoom=12&addressdetails=1`,
       {
         headers: { 'Accept-Language': 'en' }
       }
     );
     const data = await response.json();
-    return data.address?.city || data.address?.town || data.address?.village || null;
+    const address = data.address || {};
+
+    // Extract location components
+    const city = address.city || address.town || address.village || address.county || '';
+    const state = address.state || address.province || '';
+    const country = address.country || '';
+
+    // Build location name
+    const locationParts = [city, state, country].filter(part => part && part.trim());
+    const locationName = locationParts.length > 0 ? locationParts.join(', ') : null;
+
+    return {
+      locationName,
+      city: city || null,
+      state: state || null,
+      country: country || null
+    };
   } catch (err) {
     console.error('Reverse geocoding error:', err);
-    return null;
+    return {
+      locationName: null,
+      city: null,
+      state: null,
+      country: null
+    };
   }
 };
 
@@ -81,8 +112,8 @@ export const watchLocation = (callback) => {
   return navigator.geolocation.watchPosition(
     async (position) => {
       const { latitude, longitude, accuracy } = position.coords;
-      const city = await reverseGeocode(latitude, longitude);
-      callback({ latitude, longitude, city, accuracy });
+      const locationDetails = await reverseGeocode(latitude, longitude);
+      callback({ latitude, longitude, ...locationDetails, accuracy });
     },
     (error) => {
       console.error('Watch position error:', error);

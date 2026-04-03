@@ -1,34 +1,92 @@
 import React, { useState, useEffect } from 'react';
-import { FiAlertCircle, FiCheckCircle, FiClock } from 'react-icons/fi';
+import { FiAlertCircle, FiCheckCircle, FiClock, FiMapPin, FiDatabase } from 'react-icons/fi';
 import api from '../utils/api';
+import { getCurrentLocation } from '../utils/geolocation';
 import toast from 'react-hot-toast';
 import './ClaimsPage.css';
 
-const TRIGGERS = ['Heavy Rainfall', 'Flash Flood', 'Extreme Heat', 'Severe AQI', 'Curfew/Bandh'];
+const TRIGGERS = ['Heavy Rainfall', 'Flash Flood', 'Extreme Heat', 'Cyclone', 'Air Pollution', 'Severe AQI', 'Curfew/Bandh'];
 
 const ClaimsPage = () => {
   const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [showForm, setShowForm] = useState(false);
-  const [form, setForm] = useState({ triggerType: 'Heavy Rainfall', triggerValue: '', hoursLost: 3 });
+  const [form, setForm] = useState({ 
+    triggerType: 'Heavy Rainfall', 
+    triggerValue: '', 
+    hoursLost: 3,
+    latitude: null,
+    longitude: null,
+    locationStatus: 'Not captured',
+    locationName: null,
+    accuracy: null
+  });
   const [submitting, setSubmitting] = useState(false);
 
   useEffect(() => {
     api.get('/claims/my').then(r => { setClaims(r.data); setLoading(false); });
   }, []);
 
+  // Capture geolocation when form opens
+  useEffect(() => {
+    if (showForm) {
+      captureLocation();
+    }
+  }, [showForm]);
+
+  const captureLocation = async () => {
+    try {
+      setForm(prev => ({ ...prev, locationStatus: 'Capturing...' }));
+      const location = await getCurrentLocation();
+      
+      // Format location display
+      let locationDisplay = '✓ Captured';
+      if (location.locationName) {
+        locationDisplay = `✓ ${location.locationName}`;
+      }
+      
+      setForm(prev => ({ 
+        ...prev, 
+        latitude: location.latitude,
+        longitude: location.longitude,
+        locationName: location.locationName,
+        accuracy: location.accuracy,
+        locationStatus: locationDisplay
+      }));
+      toast.success('Location captured for auto-validation');
+    } catch (err) {
+      setForm(prev => ({ ...prev, locationStatus: '✗ Failed to capture location' }));
+      toast.error('Could not capture location. Manual review will be required.');
+      console.error('Geolocation error:', err);
+    }
+  };
+
   const submitClaim = async (e) => {
     e.preventDefault();
     setSubmitting(true);
     try {
-      const { data } = await api.post('/claims', form);
-      setClaims([data, ...claims]);
+      // Remove UI-only fields before submitting
+      const { locationStatus, locationName, accuracy, ...claimData } = form;
+      
+      const { data } = await api.post('/claims', claimData);
+      
+      // Create claim object that includes the full response
+      const claimWithDetails = data.claim || data;
+      setClaims([claimWithDetails, ...claims]);
       setShowForm(false);
-      toast.success(
-        data.status === 'Auto-Approved'
-          ? `Claim auto-approved! ₹${data.payoutAmount} will be sent to your UPI 🎉`
-          : `Claim submitted for review. You'll hear back shortly.`
-      );
+      
+      // Display different messages based on auto-approval
+      if (data.autoApprovalDetails?.auto_approved) {
+        toast.success(
+          `✅ Claim auto-approved based on real-time API data!\n₹${claimWithDetails.payoutAmount} will be sent to your UPI 🎉`,
+          { duration: 5 }
+        );
+      } else {
+        toast.success(
+          `Claim submitted for review using real-time ${data.autoApprovalDetails?.api_used || 'API'} data.`,
+          { duration: 5 }
+        );
+      }
     } catch (err) {
       toast.error(err.response?.data?.message || 'Failed to submit claim');
     } finally {
@@ -63,7 +121,10 @@ const ClaimsPage = () => {
       {showForm && (
         <div className="claim-form card fade-up">
           <h3>Submit a Claim</h3>
-          <p className="form-note">Claims are auto-validated against live weather/AQI data</p>
+          <p className="form-note">
+            <FiDatabase size={14} style={{ marginRight: '4px' }} />
+            Claims are auto-validated against live weather/AQI API data
+          </p>
           <form onSubmit={submitClaim}>
             <div className="form-row-3">
               <div className="input-group">
@@ -74,22 +135,67 @@ const ClaimsPage = () => {
                 </select>
               </div>
               <div className="input-group">
-                <label>Observed Value (Optional)</label>
-                <input placeholder="e.g. AQI 380, Temp 46°C"
+                <label>Observed Value (Reference Only)</label>
+                <input placeholder="e.g. AQI 380, Temp 46°C (for your records only)"
                   value={form.triggerValue}
                   onChange={e => setForm({ ...form, triggerValue: e.target.value })} />
+                <small style={{ color: '#888', fontSize: '12px', marginTop: '4px' }}>
+                  Note: This is for reference. Approval is based on real API data only.
+                </small>
               </div>
               <div className="input-group">
                 <label>Hours Lost</label>
-                <input type="number" min="1" max="12" value={form.hoursLost}
+                <input type="number" min="1" max="24" value={form.hoursLost}
                   onChange={e => setForm({ ...form, hoursLost: parseInt(e.target.value) })} required />
               </div>
             </div>
+
+            {/* Geolocation Status */}
+            <div className="location-status" style={{
+              padding: '14px 16px',
+              borderRadius: '8px',
+              background: form.locationStatus.includes('✓') ? '#2E7D32' : 
+                          form.locationStatus.includes('✗') ? '#C62828' : '#1565C0',
+              marginBottom: '16px',
+              display: 'flex',
+              alignItems: 'center',
+              gap: '10px',
+              color: '#FFFFFF',
+              fontWeight: '500'
+            }}>
+              <FiMapPin size={20} color="#FFFFFF" />
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', flex: 1 }}>
+                <span style={{ fontSize: '12px', opacity: 0.9, fontWeight: '400' }}>DETECTED LOCATION</span>
+                <span style={{ fontSize: '16px', fontWeight: '600' }}>
+                  {form.locationStatus.includes('✓') && form.locationName 
+                    ? form.locationName 
+                    : form.locationStatus.includes('✓') 
+                    ? 'Location detected'
+                    : form.locationStatus}
+                </span>
+                {form.locationStatus.includes('✓') && form.accuracy && (
+                  <span style={{ fontSize: '12px', opacity: 0.85, fontWeight: '400' }}>
+                    ±{Math.round(form.accuracy)}m accuracy
+                  </span>
+                )}
+              </div>
+              {!form.locationStatus.includes('✓') && !form.locationStatus.includes('Capturing') && (
+                <button 
+                  type="button" 
+                  onClick={captureLocation}
+                  style={{ marginLeft: 'auto', padding: '6px 12px', fontSize: '12px', cursor: 'pointer', fontWeight: '600', whiteSpace: 'nowrap' }}
+                  className="btn-secondary"
+                >
+                  Retry
+                </button>
+              )}
+            </div>
+
             <div className="claim-note">
               <FiAlertCircle size={14} color="#FFD166" />
               <span>GigShield covers income loss only. Vehicle damage and health costs are excluded.</span>
             </div>
-            <button type="submit" className="btn-primary" disabled={submitting}>
+            <button type="submit" className="btn-primary" disabled={submitting || !form.latitude}>
               {submitting ? 'Processing...' : 'Submit Claim'}
             </button>
           </form>
@@ -126,24 +232,43 @@ const ClaimsPage = () => {
             <span>Hours Lost</span>
             <span>Payout</span>
             <span>Status</span>
-            <span>Fraud Score</span>
+            <span>Details</span>
           </div>
           {claims.map(c => {
             const s = statusConfig[c.status] || statusConfig['Pending'];
+            const autoApprovalDetails = c.autoApprovalDetails;
             return (
-              <div className="table-row" key={c._id}>
+              <div className="table-row" key={c._id} style={{ cursor: 'pointer' }}>
                 <span className="col-trigger">{c.triggerType}</span>
                 <span className="col-muted">{new Date(c.claimDate).toLocaleDateString('en-IN')}</span>
                 <span>{c.hoursLost} hrs</span>
                 <span className="col-amount">₹{c.payoutAmount}</span>
                 <span><span className={`badge badge-${s.badge}`}>{s.label}</span></span>
-                <span>
-                  <div className="fraud-bar">
-                    <div className="fraud-fill"
-                      style={{ width: `${c.fraudScore * 100}%`,
-                        background: c.fraudScore < 0.3 ? '#00C49F' : c.fraudScore < 0.6 ? '#FFD166' : '#FF4444' }} />
-                  </div>
-                  <span className="fraud-val">{(c.fraudScore * 100).toFixed(0)}%</span>
+                <span style={{ fontSize: '14px', fontWeight: '500' }}>
+                  {autoApprovalDetails?.api_used ? (
+                    <span 
+                      title={autoApprovalDetails?.decision_reason}
+                      style={{
+                        color: autoApprovalDetails.auto_approved ? '#28C76F' : '#EA5455',
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: '6px'
+                      }}
+                    >
+                      {autoApprovalDetails.auto_approved ? '✔' : '🚫'}
+                      {autoApprovalDetails.auto_approved ? 'Verified by OpenWeatherMap' : 'Weather data not matched'}
+                    </span>
+                  ) : (
+                    <span style={{
+                      color: c.fraudScore >= 0.2 ? '#EA5455' : '#28C76F',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '6px'
+                    }}>
+                      {c.fraudScore >= 0.2 ? '🚫' : '✔'} 
+                      {c.fraudScore >= 0.2 ? 'High fraud risk' : `Fraud Score: ${(c.fraudScore * 100).toFixed(0)}%`}
+                    </span>
+                  )}
                 </span>
               </div>
             );
