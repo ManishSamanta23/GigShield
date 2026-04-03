@@ -256,7 +256,7 @@ const ClaimsPage = () => {
                       }}
                     >
                       {autoApprovalDetails.auto_approved ? '✔' : '🚫'}
-                      {autoApprovalDetails.auto_approved ? 'Verified by OpenWeatherMap' : 'Weather data not matched'}
+                      {autoApprovalDetails.auto_approved ? 'Auto Approved' : 'Weather data not matched'}
                     </span>
                   ) : (
                     <span style={{

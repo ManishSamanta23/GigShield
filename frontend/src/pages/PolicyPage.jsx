@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { FiCheckCircle, FiShield, FiPause, FiPlay } from 'react-icons/fi';
+import { FiCheckCircle, FiShield, FiPause, FiPlay, FiTrendingUp, FiZap, FiAlertTriangle } from 'react-icons/fi';
 import { useAuth } from '../context/AuthContext';
 import api from '../utils/api';
 import toast from 'react-hot-toast';
@@ -24,16 +24,63 @@ const PolicyPage = () => {
   const { worker } = useAuth();
   const navigate = useNavigate();
   const [policy, setPolicy] = useState(null);
+  const [claims, setClaims] = useState([]);
   const [loading, setLoading] = useState(true);
   const [activating, setActivating] = useState(null);
 
   useEffect(() => {
-    api.get('/policies/my').then(r => {
-      const activePolicy = r.data.find(p => p.status === 'Active');
-      setPolicy(activePolicy || r.data[0] || null);
-      setLoading(false);
-    });
+    const fetchData = async () => {
+      try {
+        const [policyRes, claimsRes] = await Promise.all([
+          api.get('/policies/my'),
+          api.get('/claims/my')
+        ]);
+        
+        const activePolicy = policyRes.data.find(p => p.status === 'Active');
+        setPolicy(activePolicy || policyRes.data[0] || null);
+        setClaims(claimsRes.data);
+      } catch (err) {
+        toast.error('Failed to load policy data');
+      } finally {
+        setLoading(false);
+      }
+    };
+    fetchData();
   }, []);
+
+  const totalSaved30Days = claims
+    .filter(c => ['Auto-Approved', 'Approved', 'Paid'].includes(c.status))
+    .filter(c => {
+      const claimDate = new Date(c.claimDate);
+      const thirtyDaysAgo = new Date();
+      thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+      return claimDate >= thirtyDaysAgo;
+    })
+    .reduce((sum, c) => sum + c.payoutAmount, 0);
+
+  const getShieldAdvice = () => {
+    const city = worker?.city || 'your city';
+    // Mock logic for forecast-driven advice
+    if (policy?.plan === 'Max') return null;
+    
+    const highRiskCities = ['Mumbai', 'Delhi', 'Chennai', 'Kolkata'];
+    const isHighRiskCity = highRiskCities.includes(worker?.city);
+    
+    if (isHighRiskCity) {
+      return {
+        message: `Heavy rainfall predicted in ${city} next week. We recommend the Max Shield for complete coverage against waterlogging and flood disruptions.`,
+        targetPlan: 'Max'
+      };
+    } else if (policy?.plan === 'Basic' || !policy) {
+      return {
+        message: `AQI fluctuations detected in ${city}. Upgrade to Pro Shield to protect your earnings from pollution-related zone shutdowns.`,
+        targetPlan: 'Pro'
+      };
+    }
+    return null;
+  };
+
+  const advice = getShieldAdvice();
 
   const activate = async (planName) => {
     setActivating(planName);
@@ -63,8 +110,40 @@ const PolicyPage = () => {
   return (
     <div className="policy-page page-container">
       <div className="page-header">
-        <h1>My Policy</h1>
-        <p>Manage your weekly income protection coverage</p>
+        <h1>My Protection</h1>
+        <p>Manage your weekly income security & track protected earnings</p>
+      </div>
+
+      {/* Savings Tracker & Advisor Row */}
+      <div className="policy-highlights">
+        <div className="savings-tracker-card card">
+          <div className="st-header">
+            <FiTrendingUp color="#00C49F" size={20} />
+            <h4>Income Protected (Last 30 Days)</h4>
+          </div>
+          <div className="st-body">
+            <span className="st-amount">₹{totalSaved30Days.toLocaleString()}</span>
+            <span className="st-label">Recovered from disruptions</span>
+          </div>
+        </div>
+
+        {advice && (
+          <div className="shield-advisor-card card">
+            <div className="sa-header">
+              <FiZap color="#FFD166" size={20} />
+              <h4>Shield Advisor</h4>
+            </div>
+            <p className="sa-message">{advice.message}</p>
+            {!policy || (policy.plan !== advice.targetPlan) ? (
+              <button className="sa-action" onClick={() => {
+                if (policy) navigate(`/upgrade?plan=${advice.targetPlan.toLowerCase()}`);
+                else document.getElementById('plans-section').scrollIntoView({ behavior: 'smooth' });
+              }}>
+                {policy ? `Upgrade to ${advice.targetPlan}` : `View ${advice.targetPlan} Plan`}
+              </button>
+            ) : null}
+          </div>
+        )}
       </div>
 
       {/* Active Policy Card */}
@@ -117,7 +196,7 @@ const PolicyPage = () => {
 
       {/* Plan Selection */}
       {!policy && (
-        <>
+        <div id="plans-section">
           <div className="plans-intro">
             <h2>Choose Your Weekly Plan</h2>
             <p>Premium auto-deducts every Monday via UPI. Cancel anytime.</p>
@@ -150,7 +229,7 @@ const PolicyPage = () => {
               </div>
             )})}
           </div>
-        </>
+        </div>
       )}
 
       {/* Upgrade Options */}

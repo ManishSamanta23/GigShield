@@ -16,28 +16,28 @@ const AQI_BASE = 'https://api.openweathermap.org/data/2.5/air_pollution';
 const AUTO_APPROVAL_THRESHOLDS = {
   'Heavy Rainfall': {
     metric: 'rainfall_mm',
-    threshold: 50,
-    description: 'Rainfall >= 50 mm'
+    threshold: 20,
+    description: 'Rainfall >= 20 mm/hr'
   },
   'Flash Flood': {
     metric: 'rainfall_mm',
-    threshold: 100,
-    description: 'Rainfall >= 100 mm OR Flood Alert detected'
+    threshold: 40,
+    description: 'Rainfall >= 40 mm (3-hour) OR Extreme weather condition'
   },
   'Extreme Heat': {
     metric: 'temperature_celsius',
-    threshold: 45,
-    description: 'Temperature >= 45°C'
+    threshold: 38,
+    description: 'Temperature >= 38°C'
   },
   'Cyclone': {
     metric: 'wind_speed_kmh',
-    threshold: 60,
-    description: 'Wind Speed >= 60 km/h OR Cyclone Alert detected'
+    threshold: 50,
+    description: 'Wind Speed >= 50 km/h OR Cyclone Alert detected'
   },
   'Air Pollution': {
     metric: 'aqi_index',
     threshold: 4, // AQI Level 4 (Poor) or 5 (Very Poor)
-    description: 'AQI >= 300 (PM2.5 level) OR AQI Level >= 4'
+    description: 'PM2.5 >= 250 µg/m³ OR AQI Level >= 4'
   }
 };
 
