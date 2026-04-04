@@ -37,11 +37,7 @@ const LandingPage = () => {
       <section className="hero">
         <div className="hero-glow" />
         <div className="page-container hero-inner">
-          <div className="hero-badge fade-up">
-            <span className="dot" />
-            Guidewire DEVTrails 2026
-          </div>
-          <h1 className="hero-title fade-up">
+          <h1 className="hero-title fade-up" style={{ marginTop: '48px' }}>
             Your income,<br />
             <span className="highlight">protected.</span>
           </h1>
