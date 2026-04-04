@@ -374,9 +374,8 @@ This risk profile determines their initial premium band and recommended plan.
 
 - 📁 **Detailed Setup Guide:** [Setup Guide (SETUP.md)](SETUP.md)
 - 📝 **Phase 2 Implementation Details:** [Deliverables Breakdown (PHRASE_1.md)](PHRASE_1.md)
-- 📁 **GitHub Repository:** `[Your GitHub Repo Link Here]`
+- 📁 **GitHub Repository:** `[https://github.com/ManishSamanta23/Avaran]`
 - 🎥 **Phase 1 Strategy Video:** [Watch Here][def]
-- 🖼 **Figma Wireframes:** `[Your Figma Link Here]`
 
 ---
 
@@ -404,4 +403,4 @@ Avaran **only covers** verifiable, objective, external disruptions that cause lo
 *Built with ❤️ for India's 15M+ gig workers | Guidewire DEVTrails 2026*
 
 
-[def]: https://www.dropbox.com/scl/fi/34pn8loi47279v36o628k/Avaran-Project.mp4?rlkey=kb4khgitr5h8v13xen954f07n&st=zt3i401m&dl=0
+[def]: https://www.dropbox.com/scl/fi/akyn04zrge330e0di3sp3/Avaran-Project.mp4?rlkey=c9m3uy0njwtuoox48idtwmotx&st=2k3vnwe0&dl=0
