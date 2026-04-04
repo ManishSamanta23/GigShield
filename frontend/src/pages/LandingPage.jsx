@@ -79,7 +79,7 @@ const LandingPage = () => {
               <div className="trigger-card card" key={i} style={{ '--accent': t.color }}>
                 <div className="trigger-icon" style={{ color: t.color }}>{t.icon}</div>
                 <h4>{t.label}</h4>
-                <p>{t.threshold}</p>
+                <p style={{ fontFamily: "'Inter', sans-serif", fontFeatureSettings: "'tnum' on, 'lnum' on", letterSpacing: "0.02em" }}>{t.threshold}</p>
               </div>
             ))}
           </div>
@@ -96,7 +96,7 @@ const LandingPage = () => {
           <div className="steps-grid">
             {steps.map((s, i) => (
               <div className="step-card" key={i}>
-                <div className="step-num">{s.num}</div>
+                <div className="step-num" style={{ fontFamily: "'Inter', sans-serif !important", fontSize: "inherit", fontWeight: "inherit", color: "inherit", fontFeatureSettings: "'tnum' on", letterSpacing: "0.05em", textDecoration: "none" }}>{s.num}</div>
                 <h4>{s.title}</h4>
                 <p>{s.desc}</p>
               </div>

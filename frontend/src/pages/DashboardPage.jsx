@@ -10,13 +10,13 @@ import { getWeather, getAQI, formatWeatherDisplay, formatAQIDisplay } from '../u
 import './DashboardPage.css';
 import ShieldIcon from '../components/ShieldIcon';
 
-const StatCard = ({ icon, label, value, sub, color, style = {}, className = '' }) => (
+const StatCard = ({ icon, label, value, sub, color, style = {}, className = '', valueStyle = {}, subStyle = {} }) => (
   <div className={`stat-card card ${className}`.trim()} style={style}>
     <div className="stat-icon" style={{ background: `${color}18`, color }}>{icon}</div>
     <div>
       <p className="stat-label">{label}</p>
-      <h3 className="stat-value">{value}</h3>
-      {sub && <p className="stat-sub">{sub}</p>}
+      <h3 className="stat-value" style={valueStyle}>{value}</h3>
+      {sub && <p className="stat-sub" style={subStyle}>{sub}</p>}
     </div>
   </div>
 );
@@ -152,7 +152,7 @@ const DashboardPage = () => {
         <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '16px', gridColumn: '1 / -1' }}>
           {/* Weather Card */}
           {weather && aqi && (
-            <div className="card" style={{ background: 'linear-gradient(135deg, #162347 0%, #1e3060 100%)' }}>
+            <div className="card" style={{ background: 'linear-gradient(135deg, #162347 0%, #1e3060 100%)', borderLeft: '2px solid #f97316', boxShadow: 'inset 2px 0 20px rgba(249,115,22,0.06)' }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '16px' }}>
                 <div>
                   <p style={{ color: '#8899BB', fontSize: '12px', textTransform: 'uppercase', marginBottom: '8px' }}>Current Weather</p>
@@ -161,7 +161,18 @@ const DashboardPage = () => {
                 </div>
                 <WiCloud size={32} color="#63B3ED" />
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px', color: '#8899BB', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '12px' }}>
+              {/* Location Info */}
+              {location && (
+                <div style={{ marginTop: '4px', marginBottom: '12px' }}>
+                  <div style={{ background: 'rgba(255, 255, 255, 0.05)', border: '1px solid rgba(255, 255, 255, 0.08)', borderRadius: '20px', padding: '4px 10px', display: 'inline-flex', alignItems: 'center', gap: '6px' }}>
+                    <div style={{ width: '6px', height: '6px', background: '#22c55e', borderRadius: '50%', animation: 'pulse 2s infinite' }} />
+                    <FiMapPin size={12} color="#f97316" />
+                    <p style={{ color: 'white', fontSize: '13px', fontWeight: '600', fontFamily: "'Inter', sans-serif", margin: 0, lineHeight: 1 }}>{location.city || 'Detected'}</p>
+                    <p style={{ color: 'rgba(255,255,255,0.45)', fontSize: '11px', fontFamily: "'Inter', sans-serif", margin: 0, marginLeft: '4px', lineHeight: 1 }}>±{Math.round(location.accuracy)}m</p>
+                  </div>
+                </div>
+              )}
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '12px', fontSize: '13px', color: '#8899BB', borderTop: '1px solid rgba(255,255,255,0.08)', paddingTop: '12px', marginTop: '12px' }}>
                 <div>💧 {weather.humidity}%</div>
                 <div>💨 {Math.round(weather.wind_speed * 3.6)} km/h</div>
               </div>
@@ -169,31 +180,26 @@ const DashboardPage = () => {
           )}
 
           {/* Air Quality Card */}
-          {aqi && (
-            <div className="card" style={{ background: 'linear-gradient(135deg, #162347 0%, #1e3060 100%)' }}>
+          {aqi && (() => { const aqiColor = formatAQIDisplay(aqi).color; return (
+            <div className="card" style={{ background: 'linear-gradient(135deg, #162347 0%, #1e3060 100%)', borderLeft: `2px solid ${aqiColor}` }}>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
                 <div>
                   <p style={{ color: '#8899BB', fontSize: '12px', textTransform: 'uppercase', marginBottom: '8px' }}>Air Quality</p>
-                  <h3 style={{ fontSize: '28px', color: formatAQIDisplay(aqi).color, fontFamily: "var(--font-head)" }}>{formatAQIDisplay(aqi).level}</h3>
-                  <p style={{ color: '#8899BB', fontSize: '14px' }}>PM2.5: {formatAQIDisplay(aqi).pm25}</p>
+                  <h3 style={{ fontSize: '28px', color: aqiColor, fontFamily: "var(--font-head)" }}>{formatAQIDisplay(aqi).level}</h3>
+                  <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', background: 'rgba(255,255,255,0.06)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '20px', padding: '3px 10px', marginTop: '4px', marginBottom: '8px' }}>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', fontWeight: '500', color: 'rgba(255,255,255,0.5)', letterSpacing: '0.05em' }}>PM2.5</span>
+                    <span style={{ width: '1px', height: '10px', background: 'rgba(255,255,255,0.2)' }}/>
+                    <span style={{ fontFamily: "'Inter', sans-serif", fontSize: '12px', fontWeight: '600', color: 'rgba(255,255,255,0.8)' }}>{formatAQIDisplay(aqi).pm25}</span>
+                  </div>
+                  <div className="aqi-bar-track">
+                    <div className="aqi-bar-fill" />
+                  </div>
                 </div>
-                <WiSmog size={32} color={formatAQIDisplay(aqi).color} />
+                <WiSmog size={32} color={aqiColor} />
               </div>
             </div>
-          )}
+          ); })()}
         </div>
-        
-        {location && (
-          <StatCard
-            className="location-stat-card"
-            icon={<FiMapPin />}
-            label="Detected Location"
-            value={location.city || 'Detected'}
-            sub={`±${Math.round(location.accuracy)}m accuracy`}
-            color="#00C49F"
-            style={{ background: 'rgba(0,196,159,0.1)', borderColor: '#00C49F' }}
-          />
-        )}
         
         <StatCard icon={<FiDollarSign />} label="Earnings Protected"
           value={`₹${(data?.earningsProtected || 0).toLocaleString()}`}

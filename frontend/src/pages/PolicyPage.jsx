@@ -148,7 +148,7 @@ const PolicyPage = () => {
         <div className="savings-tracker-card card">
           <div className="st-header">
             <FiTrendingUp color="#00C49F" size={20} />
-            <h4>Lifetime Impact (Last 30 Days)</h4>
+            <h4 style={{ fontFamily: "'Inter', sans-serif", fontFeatureSettings: "'tnum' on, 'lnum' on", letterSpacing: "0.08em" }}>Lifetime Impact (Last 30 Days)</h4>
           </div>
           <div className="st-body">
             <span className="st-amount">₹{totalSaved30Days.toLocaleString()}</span>

@@ -131,8 +131,23 @@ const TriggersPage = () => {
           <span>Monitoring: <strong>5 trigger types</strong></span>
         </div>
         <div className="status-item">
-          <span style={{ color: location ? '#00C49F' : '#FFD166' }}>
-            📍 {location ? `Location: ${location.city || 'Detected'}` : 'Detecting location...'}
+          <span style={{ color: location ? '#00C49F' : '#FFD166', display: 'flex', alignItems: 'center', gap: '6px' }}>
+            <svg 
+              xmlns="http://www.w3.org/2000/svg" 
+              width="14" 
+              height="14" 
+              viewBox="0 0 24 24" 
+              fill="none" 
+              stroke="#f97316" 
+              strokeWidth="2" 
+              strokeLinecap="round" 
+              strokeLinejoin="round"
+              style={{ flexShrink: 0 }}
+            >
+              <path d="M20 10c0 6-8 12-8 12S4 16 4 10a8 8 0 1 1 16 0Z"/>
+              <circle cx="12" cy="10" r="3"/>
+            </svg>
+            {location ? `Location: ${location.city || 'Detected'}` : 'Detecting location...'}
           </span>
         </div>
         {locationError && (

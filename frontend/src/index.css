@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900&display=swap');
+
 :root {
   --navy: #0D1B3E;
   --navy-light: #162347;
@@ -56,6 +58,13 @@ a { text-decoration: none; color: inherit; }
 ::-webkit-scrollbar { width: 6px; }
 ::-webkit-scrollbar-track { background: var(--navy); }
 ::-webkit-scrollbar-thumb { background: var(--navy-mid); border-radius: 3px; }
+
+/* Trigger Tile Subtitles */
+.trigger-subtitle, [class*="threshold"], [class*="subtitle"] {
+  font-family: 'Inter', sans-serif !important;
+  font-feature-settings: 'tnum' on, 'lnum' on;
+  letter-spacing: 0.02em;
+}
 
 /* Buttons */
 .btn-primary {
@@ -206,6 +215,10 @@ a { text-decoration: none; color: inherit; }
   50%       { box-shadow: 0 0 0 12px rgba(255,107,53,0); }
 }
 @keyframes spin { to { transform: rotate(360deg); } }
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
 
 .fade-up { animation: fadeUp 0.5s ease forwards; }
 
