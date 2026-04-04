@@ -372,7 +372,8 @@ This risk profile determines their initial premium band and recommended plan.
 
 ## 🔗 Important Links
 
-- 📁 **Detailed Setup Guide:** [Setup Guide (SETUP.md)](SETUP.md)
+- � **Live Demo:** [https://avaran-seven.vercel.app/](https://avaran-seven.vercel.app/)
+- �📁 **Detailed Setup Guide:** [Setup Guide (SETUP.md)](SETUP.md)
 - 📝 **Phase 2 Implementation Details:** [Deliverables Breakdown (PHRASE_1.md)](PHRASE_1.md)
 - 📁 **GitHub Repository:** `[https://github.com/ManishSamanta23/Avaran]`
 - 🎥 **Phase 1 Strategy Video:** [Watch Here][def]
